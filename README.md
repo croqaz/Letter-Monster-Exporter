@@ -1,4 +1,6 @@
 Letter-Monster
 ==============
 
-ASCII art generator, text rendering engine.
+ASCII art generator.
+
+Input a PNG image, output a TXT, or a colored HTML file.
