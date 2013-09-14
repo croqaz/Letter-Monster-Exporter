@@ -19,7 +19,7 @@ Filters = ('BLUR', 'SHARPEN', 'EDGE_ENHANCE', 'SMOOTH', 'SMOOTH_MORE', 'DETAIL',
 Patterns = {
     'default'    : u'&80$21|;:\' ',     # Original Patrick T. Cossette pattern
     'saufanlee'  : u'#WKDGLftji+;,:. ', # Sau Fan Lee pattern
-    'dark'       : u'WWWwww ',          # Good for color HTML
+    'dark'       : u'WWWwww.',          # Good for color HTML
     'huge'       : u'MMMMMMM@@@@@@@WWWWWWWWWBBBBBBBB000000008888888ZZZZZZZZZaZaaaaaa2222222SSSSSSSXXXXXXXXXXX7777777rrrrrrr;;;;;;;;iiiiiiiii:::::::,:,,,,,,.........    ',
     'dos'        : u'\u2588\u2593\u2592\u2665\u2666\u263b\u256c\u263a\u25ca\u25cb\u2591 '
 }
@@ -109,6 +109,7 @@ def Consume(image, output, x=0, y=0, pattern='default', filter=''):
     # Equalize "non conventional" colors...
     eq_colors = sorted(set(vColors))
     print 'Found `{}` unique colors.'.format(len(eq_colors))
+    print 'Colors : `{}`.'.format(eq_colors)
 
     tf = time.clock()
     if DEBUG: print( 'Letter-Monster says: "Consume took %.4f seconds total."' % (tf-ti) )
@@ -119,7 +120,7 @@ def Consume(image, output, x=0, y=0, pattern='default', filter=''):
         vOut = open(output, 'w')
         vOut.write('<style>\n')
         for c in eq_colors:
-            vOut.write('.c%s {color: #%s; text-shadow: 0 0 3px #%s}\n' % (c, c, c))
+            vOut.write('.%s {color: #%s; text-shadow: 0 0 3px #%s}\n' % (c, c, c))
         vOut.write('</style>\n<pre>\n')
 
         last_color = 0
@@ -131,7 +132,7 @@ def Consume(image, output, x=0, y=0, pattern='default', filter=''):
                 if curr_color != last_color:
                     last_color = curr_color
                     if color_index: vOut.write('</b>')
-                    vOut.write('<b class="c{}">{}'.format(curr_color, vLetters[py,px]))
+                    vOut.write('<b class="s{}">{}'.format(curr_color, vLetters[py,px]))
                 else:
                     vOut.write(vLetters[py,px])
                 color_index += 1
@@ -140,16 +141,44 @@ def Consume(image, output, x=0, y=0, pattern='default', filter=''):
         vOut.write('</b>\n</pre>')
         vOut.close()
 
+    elif output.endswith('jade'):
+
+        vOut = open(output, 'w')
+        vOut.write('<style>\n')
+        for c in eq_colors:
+            vOut.write('.%s {color: #%s; text-shadow: 0 0 3px #%s}\n' % (c, c, c))
+        vOut.write('</style>\n\n')
+
+        last_color = 0
+        color_index = 0
+
+        for py in range(vInput.size[1]):
+            vOut.write('| ')
+            for px in range(vInput.size[0]):
+                curr_color = vColors[color_index]
+                if curr_color != last_color:
+                    last_color = curr_color
+                    if color_index: vOut.write('</b>')
+                    vOut.write('<b class="s{}">{}'.format(curr_color, vLetters[py,px]))
+                else:
+                    vOut.write(vLetters[py,px])
+                color_index += 1
+            vOut.write('\n')
+
+        vOut.write('</b>\n')
+        vOut.close()
+
     else:
 
         vOut = open(output, 'w')
         vOut.close()
 
-
+#
 
 if __name__ == '__main__':
 
     DEBUG = True
 
-    Consume('house1.png', 'export.htm', x=120, y=0, pattern='dark')
+    Consume('house1.png', 'export.jade', x=120, pattern='dark')
 
+#
